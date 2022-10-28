@@ -19,7 +19,7 @@ public class GamePanel extends JPanel implements Runnable{
     Paddle paddle1;
     Paddle paddle2;
     Ball ball;
-    Obstacle obstacle;
+    ArrayList<Obstacle> obstacles;
     Score score;
     GamePanel(){
         newPaddles();
@@ -45,7 +45,11 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void newObstacle(){
-        obstacle = new Obstacle((GAME_WIDTH/2) - (BALL_DIAMETER/2), random.nextInt((GAME_HEIGHT-BALL_DIAMETER)),BALL_DIAMETER,BALL_DIAMETER);
+        obstacles = new ArrayList<Obstacle>();
+        for(int i = 0; i < 3; i++){// umjesto do 3 mislim da bih trebao uvesti novu klasu "menu" i na temelju izbora odabrati broj prepreka
+            obstacles.add(new Obstacle((GAME_WIDTH / 2) - (BALL_DIAMETER / 2), random.nextInt((GAME_HEIGHT - BALL_DIAMETER)), BALL_DIAMETER, BALL_DIAMETER));
+            //obstacles.set(i, new Obstacle((GAME_WIDTH / 2) - (BALL_DIAMETER / 2), random.nextInt((GAME_HEIGHT - BALL_DIAMETER)), BALL_DIAMETER, BALL_DIAMETER));
+        }
     }
 
     public void paint(Graphics g){
@@ -59,7 +63,9 @@ public class GamePanel extends JPanel implements Runnable{
         paddle1.draw(g);
         paddle2.draw(g);
         ball.draw(g);
-        obstacle.draw(g);
+        for(int i = 0; i < 3; i++){ // umjesto do 3 mislim da bih trebao uvesti novu klasu "menu" i na temelju izbora odabrati broj prepreka
+            obstacles.get(i).draw(g);
+        }
         score.draw(g);
     }
 
@@ -67,7 +73,9 @@ public class GamePanel extends JPanel implements Runnable{
         paddle1.move();//for smoother moves
         paddle2.move();
         ball.move();
-        obstacle.move();
+        for(int i = 0; i < 3; i++){ // umjesto do 3 mislim da bih trebao uvesti novu klasu "menu" i na temelju izbora odabrati broj prepreka
+            obstacles.get(i).move();
+        }
     }
 
     public void checkCollision(){
@@ -122,30 +130,32 @@ public class GamePanel extends JPanel implements Runnable{
         * ako lopta ide prema lijevo i udari u prepreku znaci da paddle 1 dobiva bod a ako ide prema desno i udari u prepreku paddle 2 dobiva bod
         * ovo bi se moglo mozda izdvojit u metodu jer se ponavljam u gornja 2 ifa i u ovom dolje ifu
         * */
-        if(ball.intersects(obstacle) && ball.xVelocity > 0 ) {
-            score.player2++;
-            newPaddles();
-            newBall();
-            System.out.println("P1=> " + score.player1 + " " + score.player2 + " <=P2");
-        }
-        if(ball.intersects(obstacle) && ball.xVelocity < 0){
-            score.player1++;
-            newPaddles();
-            newBall();
-            System.out.println("P1=> " + score.player1 + " " + score.player2 + " <=P2");
-        }
-        //for obstacle to stay on the game screen
-        if(obstacle.y <= 0){
-            obstacle.yVelocity *= -1;
-        }
-        if(obstacle.y >= (GAME_HEIGHT - BALL_DIAMETER)){
-            obstacle.yVelocity *= -1;
-        }
-        if(obstacle.x <= 0){
-            obstacle.xVelocity *= -1;
-        }
-        if(obstacle.x >= (GAME_WIDTH - BALL_DIAMETER)){
-            obstacle.xVelocity *= -1;
+        for(int i = 0; i < 3; i++){
+            if(ball.intersects(obstacles.get(i)) && ball.xVelocity > 0 ) {
+                score.player2++;
+                newPaddles();
+                newBall();
+                System.out.println("P1=> " + score.player1 + " " + score.player2 + " <=P2");
+            }
+            if(ball.intersects(obstacles.get(i)) && ball.xVelocity < 0){
+                score.player1++;
+                newPaddles();
+                newBall();
+                System.out.println("P1=> " + score.player1 + " " + score.player2 + " <=P2");
+            }
+            //for obstacle to stay on the game screen
+            if(obstacles.get(i).y <= 0){
+                obstacles.get(i).yVelocity *= -1;
+            }
+            if(obstacles.get(i).y >= (GAME_HEIGHT - BALL_DIAMETER)){
+                obstacles.get(i).yVelocity *= -1;
+            }
+            if(obstacles.get(i).x <= 0){
+                obstacles.get(i).xVelocity *= -1;
+            }
+            if(obstacles.get(i).x >= (GAME_WIDTH - BALL_DIAMETER)){
+                obstacles.get(i).xVelocity *= -1;
+            }
         }
     }
 
